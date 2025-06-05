@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Cologne Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: #000000;
+      }
+      .glass-effect {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      }
+      .nav-enhanced {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.95) 0%,
+          rgba(20, 20, 20, 0.9) 100%
+        );
+        backdrop-filter: blur(25px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      }
+      .logo-enhanced {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #cccccc 50%,
+          #999999 100%
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        letter-spacing: 2px;
+      }
+      .sidebar-item {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 4px 0;
+      }
+      .sidebar-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(4px);
+      }
+      .sidebar-item.active {
+        background: rgba(255, 255, 255, 0.15);
+        border-left: 3px solid #ffffff;
+      }
+      .card {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+        color: #000000;
+        transition: all 0.3s ease;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+      }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+      }
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .modal {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+      }
+      .form-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        transition: all 0.3s ease;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .stats-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0.05) 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+      .stats-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body class="text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 nav-enhanced">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+          <div class="logo-enhanced">✦ AROMA ADMIN</div>
+          <div class="flex items-center space-x-4">
+            <span class="text-gray-300">Welcome, Admin</span>
+            <button
+              onclick="logout()"
+              class="text-gray-300 hover:text-white transition-colors duration-300"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="flex pt-20">
+      <!-- Sidebar -->
+      <div class="w-64 min-h-screen glass-effect p-6">
+        <div class="space-y-2">
+          <div
+            class="sidebar-item active p-3 cursor-pointer"
+            onclick="showSection('dashboard')"
+          >
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                ></path>
+              </svg>
+              <span>Dashboard</span>
+            </div>
+          </div>
+          <div
+            class="sidebar-item p-3 cursor-pointer"
+            onclick="showSection('products')"
+          >
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM10 12a2 2 0 100-4 2 2 0 000 4z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <span>Products</span>
+            </div>
+          </div>
+          <div
+            class="sidebar-item p-3 cursor-pointer"
+            onclick="showSection('orders')"
+          >
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                ></path>
+              </svg>
+              <span>Orders</span>
+            </div>
+          </div>
+          <div
+            class="sidebar-item p-3 cursor-pointer"
+            onclick="showSection('users')"
+          >
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
+                ></path>
+              </svg>
+              <span>Users</span>
+            </div>
+          </div>
+          <div
+            class="sidebar-item p-3 cursor-pointer"
+            onclick="showSection('analytics')"
+          >
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
+                ></path>
+              </svg>
+              <span>Analytics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 p-8">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section">
+          <h1 class="text-3xl font-bold mb-8">Dashboard Overview</h1>
+
+          <!-- Stats Cards -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
+            <div class="stats-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm">Total Products</p>
+                  <p class="text-2xl font-bold" id="total-products">12</p>
+                </div>
+                <div
+                  class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center"
+                >
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm">Total Orders</p>
+                  <p class="text-2xl font-bold" id="total-orders">45</p>
+                </div>
+                <div
+                  class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center"
+                >
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm">Total Users</p>
+                  <p class="text-2xl font-bold" id="total-users">128</p>
+                </div>
+                <div
+                  class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center"
+                >
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats-card p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-sm">Revenue</p>
+                  <p class="text-2xl font-bold" id="total-revenue">$12,450</p>
+                </div>
+                <div
+                  class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center"
+                >
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="card p-6">
+            <h2 class="text-xl font-semibold mb-4">Recent Activity</h2>
+            <div class="space-y-4" id="recent-activity">
+              <div
+                class="flex items-center space-x-4 p-3 bg-gray-800 rounded-lg"
+              >
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>New order #1234 received</span>
+                <span class="text-gray-400 text-sm ml-auto">2 minutes ago</span>
+              </div>
+              <div
+                class="flex items-center space-x-4 p-3 bg-gray-800 rounded-lg"
+              >
+                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span>Product "Ocean Breeze" updated</span>
+                <span class="text-gray-400 text-sm ml-auto"
+                  >15 minutes ago</span
+                >
+              </div>
+              <div
+                class="flex items-center space-x-4 p-3 bg-gray-800 rounded-lg"
+              >
+                <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span>New user registered</span>
+                <span class="text-gray-400 text-sm ml-auto">1 hour ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Section -->
+        <div id="products-section" class="section hidden">
+          <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Product Management</h1>
+            <button
+              onclick="openAddProductModal()"
+              class="btn-primary px-6 py-3 rounded-lg font-semibold"
+            >
+              Add New Product
+            </button>
+          </div>
+
+          <!-- Products Table -->
+          <div class="card p-6">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-gray-700">
+                    <th class="text-left py-3 px-4">Product</th>
+                    <th class="text-left py-3 px-4">Price</th>
+                    <th class="text-left py-3 px-4">Stock</th>
+                    <th class="text-left py-3 px-4">Status</th>
+                    <th class="text-left py-3 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table">
+                  <!-- Products will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="orders-section" class="section hidden">
+          <h1 class="text-3xl font-bold mb-8">Order Management</h1>
+
+          <div class="card p-6">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-gray-700">
+                    <th class="text-left py-3 px-4">Order ID</th>
+                    <th class="text-left py-3 px-4">Customer</th>
+                    <th class="text-left py-3 px-4">Products</th>
+                    <th class="text-left py-3 px-4">Total</th>
+                    <th class="text-left py-3 px-4">Status</th>
+                    <th class="text-left py-3 px-4">Date</th>
+                    <th class="text-left py-3 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table">
+                  <!-- Orders will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users-section" class="section hidden">
+          <h1 class="text-3xl font-bold mb-8">User Management</h1>
+
+          <div class="card p-6">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-gray-700">
+                    <th class="text-left py-3 px-4">User</th>
+                    <th class="text-left py-3 px-4">Email</th>
+                    <th class="text-left py-3 px-4">Orders</th>
+                    <th class="text-left py-3 px-4">Total Spent</th>
+                    <th class="text-left py-3 px-4">Join Date</th>
+                    <th class="text-left py-3 px-4">Status</th>
+                    <th class="text-left py-3 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="users-table">
+                  <!-- Users will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics-section" class="section hidden">
+          <h1 class="text-3xl font-bold mb-8">Analytics & Reports</h1>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold mb-4">Sales Overview</h3>
+              <div
+                class="h-64 bg-gray-800 rounded-lg flex items-center justify-center"
+              >
+                <span class="text-gray-400">Sales Chart Placeholder</span>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold mb-4">Top Products</h3>
+              <div class="space-y-3" id="top-products">
+                <!-- Top products will be populated here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div
+      id="add-product-modal"
+      class="fixed inset-0 modal hidden items-center justify-center z-50"
+    >
+      <div class="card p-8 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold">Add New Product</h2>
+          <button
+            onclick="closeAddProductModal()"
+            class="text-gray-400 hover:text-white"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <form id="add-product-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Product Name</label>
+            <input
+              type="text"
+              id="product-name"
+              class="form-input w-full p-3"
+              placeholder="Enter product name"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Description</label>
+            <textarea
+              id="product-description"
+              class="form-input w-full p-3 h-24"
+              placeholder="Enter product description"
+              required
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">Price ($)</label>
+              <input
+                type="number"
+                id="product-price"
+                class="form-input w-full p-3"
+                placeholder="0.00"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2">Stock</label>
+              <input
+                type="number"
+                id="product-stock"
+                class="form-input w-full p-3"
+                placeholder="0"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Category</label>
+            <select
+              id="product-category"
+              class="form-input w-full p-3"
+              required
+            >
+              <option value="">Select category</option>
+              <option value="cologne">Cologne</option>
+              <option value="perfume">Perfume</option>
+              <option value="body-spray">Body Spray</option>
+              <option value="gift-set">Gift Set</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Image URL</label>
+            <input
+              type="url"
+              id="product-image"
+              class="form-input w-full p-3"
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+
+          <div class="flex space-x-4 pt-4">
+            <button
+              type="submit"
+              class="btn-primary px-6 py-3 rounded-lg font-semibold flex-1"
+            >
+              Add Product
+            </button>
+            <button
+              type="button"
+              onclick="closeAddProductModal()"
+              class="btn-secondary px-6 py-3 rounded-lg font-semibold"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div
+      id="edit-product-modal"
+      class="fixed inset-0 modal hidden items-center justify-center z-50"
+    >
+      <div class="card p-8 max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold">Edit Product</h2>
+          <button
+            onclick="closeEditProductModal()"
+            class="text-gray-400 hover:text-white"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <form id="edit-product-form" class="space-y-4">
+          <input type="hidden" id="edit-product-id" />
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Product Name</label>
+            <input
+              type="text"
+              id="edit-product-name"
+              class="form-input w-full p-3"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Description</label>
+            <textarea
+              id="edit-product-description"
+              class="form-input w-full p-3 h-24"
+              required
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">Price ($)</label>
+              <input
+                type="number"
+                id="edit-product-price"
+                class="form-input w-full p-3"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2">Stock</label>
+              <input
+                type="number"
+                id="edit-product-stock"
+                class="form-input w-full p-3"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Category</label>
+            <select
+              id="edit-product-category"
+              class="form-input w-full p-3"
+              required
+            >
+              <option value="cologne">Cologne</option>
+              <option value="perfume">Perfume</option>
+              <option value="body-spray">Body Spray</option>
+              <option value="gift-set">Gift Set</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Image URL</label>
+            <input
+              type="url"
+              id="edit-product-image"
+              class="form-input w-full p-3"
+            />
+          </div>
+
+          <div class="flex space-x-4 pt-4">
+            <button
+              type="submit"
+              class="btn-primary px-6 py-3 rounded-lg font-semibold flex-1"
+            >
+              Update Product
+            </button>
+            <button
+              type="button"
+              onclick="closeEditProductModal()"
+              class="btn-secondary px-6 py-3 rounded-lg font-semibold"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Check authentication before loading admin panel
+      function checkAuth() {
+        const isLoggedIn = localStorage.getItem("adminLoggedIn");
+        const loginTime = parseInt(localStorage.getItem("adminLoginTime"));
+        const currentTime = Date.now();
+        const sessionDuration = 24 * 60 * 60 * 1000; // 24 hours
+
+        if (!isLoggedIn || isLoggedIn !== "true") {
+          window.location.href = "signin.html";
+          return false;
+        }
+
+        if (currentTime - loginTime > sessionDuration) {
+          localStorage.removeItem("adminLoggedIn");
+          localStorage.removeItem("adminLoginTime");
+          window.location.href = "signin.html";
+          return false;
+        }
+
+        return true;
+      }
+
+      // Check auth on page load
+      if (!checkAuth()) {
+        // Redirect will happen in checkAuth function
+      }
+    </script>
+    <script src="admin.js"></script>
+  </body>
+</html>

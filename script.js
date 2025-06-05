@@ -68,8 +68,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Add to Cart buttons
-  const addToCartBtns = [
+  // Load products from admin panel or use default products
+  let adminProducts = JSON.parse(localStorage.getItem('adminProducts')) || [];
+  
+  // Default products if no admin products exist
+  const defaultProducts = [
     {
       id: "add-to-cart-1",
       product: "Midnight Essence",
@@ -89,6 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
       priceStr: "$75",
     },
   ];
+  
+  // Use admin products if available, otherwise use default
+  const addToCartBtns = adminProducts.length > 0 ? adminProducts : defaultProducts;
 
   addToCartBtns.forEach((item) => {
     const btn = document.getElementById(item.id);

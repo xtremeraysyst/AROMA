@@ -9,6 +9,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Google Sign-In API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
       body {
         font-family: "Inter", sans-serif;
@@ -198,7 +200,19 @@
 
         <!-- Social Sign Up -->
         <div class="space-y-3">
+          <!-- Google Sign Up Button -->
+          <div
+            id="g_id_onload"
+            data-client_id="744537682797-s0bqskthlm3blqu5af7u00s9hlhl5cl0.apps.googleusercontent.com"
+            data-context="signup"
+            data-ux_mode="popup"
+            data-callback="handleGoogleSignUp"
+            data-auto_prompt="false"
+          ></div>
+
           <button
+            id="google-signup-btn"
+            onclick="signUpWithGoogle()"
             class="w-full flex items-center justify-center px-4 py-3 border border-gray-600 rounded-lg text-white hover:bg-gray-800 transition-all duration-300"
           >
             <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="currentColor">
@@ -220,17 +234,6 @@
               />
             </svg>
             Continue with Google
-          </button>
-
-          <button
-            class="w-full flex items-center justify-center px-4 py-3 border border-gray-600 rounded-lg text-white hover:bg-gray-800 transition-all duration-300"
-          >
-            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-              />
-            </svg>
-            Continue with Facebook
           </button>
         </div>
 
@@ -272,6 +275,56 @@
     </div>
 
     <script>
+      // Google Sign-Up Configuration
+      function initializeGoogleSignUp() {
+        google.accounts.id.initialize({
+          client_id:
+            "744537682797-s0bqskthlm3blqu5af7u00s9hlhl5cl0.apps.googleusercontent.com",
+          callback: handleGoogleSignUp,
+        });
+      }
+
+      // Handle Google Sign-Up
+      function handleGoogleSignUp(response) {
+        console.log("Google Sign-Up Response:", response);
+
+        // Decode the JWT token to get user info
+        const responsePayload = decodeJwtResponse(response.credential);
+
+        console.log("User Info:", {
+          email: responsePayload.email,
+          name: responsePayload.name,
+          picture: responsePayload.picture,
+        });
+
+        // Here you would send the token to your backend for account creation
+        // For demo purposes:
+        alert(
+          `Welcome ${responsePayload.name}! Google sign-up successful. Redirecting to sign in...`
+        );
+        window.location.href = "signin.html";
+      }
+
+      // Trigger Google Sign-Up
+      function signUpWithGoogle() {
+        google.accounts.id.prompt();
+      }
+
+      // Decode JWT token
+      function decodeJwtResponse(token) {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map(function (c) {
+              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+        );
+        return JSON.parse(jsonPayload);
+      }
+
       // Form submission handler
       document
         .getElementById("signup-form")
@@ -306,12 +359,34 @@
             return;
           }
 
+          // Here you would typically send the data to your backend
+          console.log("Sign up attempt:", { fullname, email, password });
+
           // Simulate successful registration
           alert("Account created successfully! Redirecting to sign in page...");
           setTimeout(() => {
             window.location.href = "signin.html";
           }, 1000);
         });
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        // Logo animation
+        const logo = document.querySelector(".floating");
+        if (logo) {
+          logo.style.animationDelay = "0s";
+        }
+
+        // Initialize Google Sign-Up when the API loads
+        if (typeof google !== "undefined") {
+          initializeGoogleSignUp();
+        } else {
+          // Wait for Google API to load
+          window.addEventListener("load", function () {
+            setTimeout(initializeGoogleSignUp, 1000);
+          });
+        }
+      });
 
       // Add floating animation to logo
       document.querySelector("h1 span").classList.add("floating");
