@@ -1,0 +1,560 @@
+I<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cologne Collection - Premium Fragrances</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: #000000;
+      }
+      .glass-effect {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      }
+      .nav-enhanced {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.95) 0%,
+          rgba(20, 20, 20, 0.9) 100%
+        );
+        backdrop-filter: blur(25px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      }
+      .nav-link {
+        position: relative;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        transform: translateY(-2px);
+      }
+      .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #ffffff, #cccccc);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+      }
+      .nav-link:hover::before {
+        width: 80%;
+      }
+      .logo-enhanced {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #cccccc 50%,
+          #999999 100%
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        letter-spacing: 2px;
+      }
+      .mobile-menu-btn {
+        padding: 8px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+      }
+      .mobile-menu-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #000000 0%, #333333 100%);
+      }
+      .dark-gradient {
+        background: linear-gradient(
+          135deg,
+          #000000 0%,
+          #111111 50%,
+          #222222 100%
+        );
+      }
+      .floating {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      /* Animated Background Pattern */
+      .animated-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.1;
+        transition: opacity 0.5s ease;
+        background-image: radial-gradient(
+            circle at 25% 25%,
+            white 2px,
+            transparent 2px
+          ),
+          radial-gradient(circle at 75% 75%, white 2px, transparent 2px);
+        background-size: 50px 50px;
+        animation: movePattern 20s linear infinite;
+      }
+
+      .animated-bg.fade-out {
+        opacity: 0;
+      }
+
+      @keyframes movePattern {
+        0% {
+          background-position: 0 0, 25px 25px;
+        }
+        100% {
+          background-position: 50px 50px, 75px 75px;
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+      .glow {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      }
+      .glow-strong {
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3),
+          0 0 60px rgba(255, 255, 255, 0.1);
+      }
+      #three-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+
+      /* Cart Dropdown Styles */
+      .cart-dropdown-container:hover #cart-preview {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .cart-preview-item {
+        transition: all 0.2s ease;
+      }
+
+      .cart-preview-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+      .dark-card {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body class="text-white overflow-x-hidden dark-gradient">
+    <!-- Animated Background Pattern -->
+    <div id="animated-bg" class="animated-bg"></div>
+
+    <div id="three-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 nav-enhanced">
+      <div class="container mx-auto px-6 py-5">
+        <div class="flex justify-between items-center">
+          <div class="logo-enhanced flex-shrink-0">✦ AROMA</div>
+          <div
+            class="hidden md:flex space-x-8 absolute left-1/2 transform -translate-x-1/2"
+          >
+            <a href="#home" class="nav-link text-gray-200">Home</a>
+            <a href="#collection" class="nav-link text-gray-200">Collection</a>
+            <a href="#about" class="nav-link text-gray-200">About</a>
+          </div>
+          <div class="hidden md:flex items-center space-x-4 flex-shrink-0">
+            <div class="relative cart-dropdown-container">
+              <button
+                id="cart-btn"
+                class="p-2 text-white hover:text-gray-300 transition-all duration-300"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"
+                  ></path>
+                </svg>
+                <span
+                  id="cart-count"
+                  class="absolute -top-2 -right-2 bg-white text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+                  >0</span
+                >
+              </button>
+
+              <!-- Quick Cart Preview -->
+              <div
+                id="cart-preview"
+                class="absolute right-0 top-full mt-2 w-80 glass-effect rounded-xl p-4 opacity-0 invisible transform translate-y-2 transition-all duration-300 z-50"
+              >
+                <div class="mb-3">
+                  <h3 class="text-lg font-semibold text-white mb-2">
+                    Quick Cart View
+                  </h3>
+                  <div
+                    id="cart-preview-items"
+                    class="space-y-2 max-h-60 overflow-y-auto"
+                  >
+                    <!-- Cart items will be populated here -->
+                  </div>
+                </div>
+
+                <div class="border-t border-gray-600 pt-3">
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-gray-300">Total:</span>
+                    <span
+                      id="cart-preview-total"
+                      class="text-white font-semibold"
+                      >$0</span
+                    >
+                  </div>
+                  <button
+                    onclick="window.location.href='cart.html'"
+                    class="w-full bg-gradient-to-r from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300"
+                  >
+                    View Full Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+            <a
+              href="signin.html"
+              id="sign-in-btn"
+              class="px-4 py-2 text-sm border border-white text-white rounded-full hover:bg-white hover:text-black transition-all duration-300 inline-block text-center"
+            >
+              Sign In
+            </a>
+            <a
+              href="signup.html"
+              id="get-started-btn"
+              class="px-4 py-2 text-sm bg-gradient-to-r from-gray-700 to-gray-900 rounded-full hover:from-gray-600 hover:to-gray-800 transition-all duration-300 glow-strong text-white inline-block text-center"
+            >
+              Get Started
+            </a>
+          </div>
+          <button id="menu-toggle" class="md:hidden mobile-menu-btn">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden mt-4 pb-4">
+          <div class="flex flex-col space-y-3">
+            <a href="#home" class="nav-link text-gray-200 block">Home</a>
+            <a href="#collection" class="nav-link text-gray-200 block"
+              >Collection</a
+            >
+            <a href="#about" class="nav-link text-gray-200 block">About</a>
+            <div class="flex flex-col space-y-2 pt-3 border-t border-gray-700">
+              <div class="flex items-center justify-center mb-2">
+                <button
+                  id="mobile-cart-btn"
+                  class="flex items-center space-x-2 p-2 text-white hover:text-gray-300 transition-all duration-300"
+                >
+                  <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"
+                    ></path>
+                  </svg>
+                  <span>Cart (<span id="mobile-cart-count">0</span>)</span>
+                </button>
+              </div>
+              <a
+                href="signin.html"
+                id="mobile-sign-in-btn"
+                class="px-4 py-2 text-sm border border-white text-white rounded-full hover:bg-white hover:text-black transition-all duration-300 inline-block text-center"
+              >
+                Sign In
+              </a>
+              <a
+                href="signup.html"
+                id="mobile-get-started-btn"
+                class="px-4 py-2 text-sm bg-gradient-to-r from-gray-700 to-gray-900 rounded-full hover:from-gray-600 hover:to-gray-800 transition-all duration-300 text-white inline-block text-center"
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section
+      id="home"
+      class="min-h-screen flex items-center justify-center relative"
+    >
+      <div class="text-center z-10">
+        <h1 class="text-6xl md:text-8xl font-bold mb-6 floating">
+          <span
+            class="bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent"
+          >
+            PREMIUM
+          </span>
+          <br />
+          <span class="text-white">COLOGNE</span>
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 text-gray-300 max-w-2xl mx-auto">
+          Discover our exclusive collection of luxury fragrances that define
+          your unique style
+        </p>
+        <button
+          id="explore-btn"
+          class="bg-gradient-to-r from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 glow hover:scale-105 text-white"
+        >
+          Explore Collection
+        </button>
+      </div>
+    </section>
+
+    <!-- Collection Section -->
+    <section id="collection" class="py-20 px-6">
+      <div class="container mx-auto">
+        <h2 class="text-4xl md:text-6xl font-bold text-center mb-16">
+          <span
+            class="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
+          >
+            Our Collection
+          </span>
+        </h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Product Card 1 -->
+          <div
+            class="dark-card rounded-2xl p-6 hover:scale-105 transition-all duration-300 group hover:shadow-2xl hover:shadow-white/20"
+          >
+            <div
+              class="h-64 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden"
+            >
+              <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+              <div
+                class="w-20 h-32 bg-white bg-opacity-30 rounded-lg floating relative z-10 shadow-lg"
+              ></div>
+              <div
+                class="absolute top-4 right-4 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full"
+              >
+                Premium
+              </div>
+            </div>
+            <h3 class="text-2xl font-semibold mb-2 text-white">
+              Midnight Essence
+            </h3>
+            <p class="text-gray-300 mb-4">
+              A sophisticated blend of bergamot and sandalwood
+            </p>
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold text-white">$89</span>
+              <button
+                id="add-to-cart-1"
+                class="bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-500 hover:to-gray-700 px-6 py-2 rounded-full transition-all duration-300 text-white font-medium glow"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Card 2 -->
+          <div
+            class="dark-card rounded-2xl p-6 hover:scale-105 transition-all duration-300 group hover:shadow-2xl hover:shadow-white/20"
+          >
+            <div
+              class="h-64 bg-gradient-to-br from-gray-600 to-gray-800 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden"
+            >
+              <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+              <div
+                class="w-20 h-32 bg-white bg-opacity-30 rounded-lg floating relative z-10 shadow-lg"
+                style="animation-delay: -2s"
+              ></div>
+              <div
+                class="absolute top-4 right-4 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full"
+              >
+                Luxury
+              </div>
+            </div>
+            <h3 class="text-2xl font-semibold mb-2 text-white">Royal Amber</h3>
+            <p class="text-gray-300 mb-4">
+              Rich amber notes with hints of vanilla and musk
+            </p>
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold text-white">$125</span>
+              <button
+                id="add-to-cart-2"
+                class="bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-500 hover:to-gray-700 px-6 py-2 rounded-full transition-all duration-300 text-white font-medium glow"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Card 3 -->
+          <div
+            class="dark-card rounded-2xl p-6 hover:scale-105 transition-all duration-300 group hover:shadow-2xl hover:shadow-white/20"
+          >
+            <div
+              class="h-64 bg-gradient-to-br from-gray-500 to-gray-700 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden"
+            >
+              <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+              <div
+                class="w-20 h-32 bg-white bg-opacity-30 rounded-lg floating relative z-10 shadow-lg"
+                style="animation-delay: -4s"
+              ></div>
+              <div
+                class="absolute top-4 right-4 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full"
+              >
+                Fresh
+              </div>
+            </div>
+            <h3 class="text-2xl font-semibold mb-2 text-white">Ocean Breeze</h3>
+            <p class="text-gray-300 mb-4">
+              Fresh aquatic scent with citrus undertones
+            </p>
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold text-white">$75</span>
+              <button
+                id="add-to-cart-3"
+                class="bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-500 hover:to-gray-700 px-6 py-2 rounded-full transition-all duration-300 text-white font-medium glow"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-6">
+      <div class="container mx-auto max-w-4xl text-center">
+        <h2 class="text-4xl md:text-6xl font-bold mb-8">
+          <span
+            class="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
+          >
+            About Us
+          </span>
+        </h2>
+        <p class="text-xl text-gray-300 leading-relaxed mb-8">
+          We curate the finest collection of premium colognes from around the
+          world. Each fragrance in our collection is carefully selected for its
+          unique character, quality, and ability to make a lasting impression.
+        </p>
+        <div class="grid md:grid-cols-3 gap-8 mt-16">
+          <div
+            class="dark-card rounded-xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10"
+          >
+            <div class="text-4xl mb-4">🌟</div>
+            <h3 class="text-xl font-semibold mb-2 text-white">
+              Premium Quality
+            </h3>
+            <p class="text-gray-300">
+              Only the finest ingredients and craftsmanship
+            </p>
+          </div>
+          <div
+            class="dark-card rounded-xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10"
+          >
+            <div class="text-4xl mb-4">🚚</div>
+            <h3 class="text-xl font-semibold mb-2 text-white">Fast Shipping</h3>
+            <p class="text-gray-300">Quick and secure delivery worldwide</p>
+          </div>
+          <div
+            class="dark-card rounded-xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-green-500/10"
+          >
+            <div class="text-4xl mb-4">💎</div>
+            <h3 class="text-xl font-semibold mb-2 text-white">Authentic</h3>
+            <p class="text-gray-300">100% genuine products guaranteed</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-gray-700 bg-black bg-opacity-30">
+      <div class="container mx-auto text-center">
+        <div class="logo-enhanced mb-4">✦ AROMA</div>
+        <p class="text-gray-300 mb-6">
+          Premium cologne collection for the modern individual
+        </p>
+        <div class="flex justify-center space-x-6 mb-6">
+          <a
+            href="#"
+            class="text-gray-300 hover:text-blue-400 transition-all duration-300 hover:scale-105"
+            >Privacy Policy</a
+          >
+          <a
+            href="#"
+            class="text-gray-300 hover:text-blue-400 transition-all duration-300 hover:scale-105"
+            >Terms of Service</a
+          >
+          <a
+            href="#"
+            class="text-gray-300 hover:text-blue-400 transition-all duration-300 hover:scale-105"
+            >Support</a
+          >
+        </div>
+        <div class="text-sm text-gray-500">
+          © 2024 AROMA. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart - Cologne Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: #000000;
+      }
+      .glass-effect {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      }
+      .nav-enhanced {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.95) 0%,
+          rgba(20, 20, 20, 0.9) 100%
+        );
+        backdrop-filter: blur(25px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      }
+      .logo-enhanced {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #cccccc 50%,
+          #999999 100%
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        letter-spacing: 2px;
+      }
+      .glow {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      }
+      .cart-item {
+        transition: all 0.3s ease;
+      }
+      .cart-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+      }
+      .quantity-btn {
+        transition: all 0.2s ease;
+      }
+      .quantity-btn:hover {
+        transform: scale(1.1);
+      }
+    </style>
+  </head>
+  <body class="text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 nav-enhanced">
+      <div class="container mx-auto px-6 py-5">
+        <div class="flex justify-between items-center">
+          <div class="logo-enhanced">✦ AROMA</div>
+          <div class="flex items-center space-x-4">
+            <a
+              href="index.html"
+              class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center"
+            >
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                ></path>
+              </svg>
+              Back to Shop
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Cart Content -->
+    <div class="pt-24 pb-12 px-6">
+      <div class="container mx-auto max-w-4xl">
+        <!-- Cart Header -->
+        <div class="text-center mb-12">
+          <h1 class="text-4xl md:text-6xl font-bold mb-8">
+            <span
+              class="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
+              >Shopping Cart</span
+            >
+          </h1>
+          <p class="text-xl text-gray-300 leading-relaxed">
+            Review your selected fragrances
+          </p>
+        </div>
+
+        <!-- Cart Items Container -->
+        <div id="cart-container" class="space-y-6">
+          <!-- Empty Cart Message -->
+          <div id="empty-cart" class="text-center py-12">
+            <div class="glass-effect rounded-2xl p-12">
+              <svg
+                class="w-24 h-24 mx-auto mb-6 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"
+                ></path>
+              </svg>
+              <h3 class="text-2xl font-semibold mb-4 text-white">
+                Your cart is empty
+              </h3>
+              <p class="text-gray-400 mb-8">
+                Discover our premium fragrance collection
+              </p>
+              <a
+                href="index.html"
+                class="inline-block bg-gradient-to-r from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 glow"
+              >
+                Start Shopping
+              </a>
+            </div>
+          </div>
+
+          <!-- Cart Items List -->
+          <div id="cart-items" class="hidden space-y-4"></div>
+
+          <!-- Cart Summary -->
+          <div id="cart-summary" class="hidden">
+            <div class="glass-effect rounded-2xl p-8">
+              <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-semibold text-white">Order Summary</h3>
+                <div class="text-right">
+                  <p class="text-gray-400">
+                    Total Items: <span id="total-items">0</span>
+                  </p>
+                  <p class="text-3xl font-bold text-white">
+                    $<span id="total-price">0</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <button
+                  id="checkout-btn"
+                  class="w-full bg-gradient-to-r from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 glow hover:scale-105"
+                >
+                  Proceed to Checkout
+                </button>
+
+                <button
+                  id="clear-cart-btn"
+                  class="w-full border border-gray-600 text-gray-300 hover:text-white hover:border-white font-semibold py-3 px-6 rounded-lg transition-all duration-300"
+                >
+                  Clear Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Cart functionality
+      let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+      let cartCount = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+      );
+
+      // DOM elements
+      const emptyCart = document.getElementById("empty-cart");
+      const cartItemsContainer = document.getElementById("cart-items");
+      const cartSummary = document.getElementById("cart-summary");
+      const totalItems = document.getElementById("total-items");
+      const totalPrice = document.getElementById("total-price");
+      const checkoutBtn = document.getElementById("checkout-btn");
+      const clearCartBtn = document.getElementById("clear-cart-btn");
+
+      // Initialize cart display
+      function initCart() {
+        if (cartItems.length === 0) {
+          showEmptyCart();
+        } else {
+          showCartItems();
+        }
+      }
+
+      // Show empty cart
+      function showEmptyCart() {
+        emptyCart.classList.remove("hidden");
+        cartItemsContainer.classList.add("hidden");
+        cartSummary.classList.add("hidden");
+      }
+
+      // Show cart items
+      function showCartItems() {
+        emptyCart.classList.add("hidden");
+        cartItemsContainer.classList.remove("hidden");
+        cartSummary.classList.remove("hidden");
+        renderCartItems();
+        updateSummary();
+      }
+
+      // Render cart items
+      function renderCartItems() {
+        cartItemsContainer.innerHTML = "";
+
+        cartItems.forEach((item, index) => {
+          const cartItem = document.createElement("div");
+          cartItem.className = "glass-effect rounded-xl p-6 cart-item";
+          cartItem.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center">
+                  <span class="text-2xl">🍃</span>
+                </div>
+                <div>
+                  <h4 class="text-lg font-semibold text-white">${
+                    item.product
+                  }</h4>
+                  <p class="text-gray-400">${item.priceStr} each</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                  <button onclick="updateQuantity(${index}, -1)" class="quantity-btn w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                    </svg>
+                  </button>
+                  <span class="w-8 text-center text-white font-semibold">${
+                    item.quantity
+                  }</span>
+                  <button onclick="updateQuantity(${index}, 1)" class="quantity-btn w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="text-right">
+                  <p class="text-lg font-semibold text-white">$${
+                    item.price * item.quantity
+                  }</p>
+                </div>
+                
+                <button onclick="removeItem(${index})" class="text-gray-400 hover:text-red-400 transition-colors duration-300">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
+          cartItemsContainer.appendChild(cartItem);
+        });
+      }
+
+      // Update quantity
+      function updateQuantity(index, change) {
+        cartItems[index].quantity += change;
+
+        if (cartItems[index].quantity <= 0) {
+          cartItems.splice(index, 1);
+        }
+
+        saveCart();
+
+        if (cartItems.length === 0) {
+          showEmptyCart();
+        } else {
+          renderCartItems();
+          updateSummary();
+        }
+      }
+
+      // Remove item
+      function removeItem(index) {
+        cartItems.splice(index, 1);
+        saveCart();
+
+        if (cartItems.length === 0) {
+          showEmptyCart();
+        } else {
+          renderCartItems();
+          updateSummary();
+        }
+      }
+
+      // Update summary
+      function updateSummary() {
+        const totalItemCount = cartItems.reduce(
+          (total, item) => total + item.quantity,
+          0
+        );
+        const totalPriceValue = cartItems.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
+
+        totalItems.textContent = totalItemCount;
+        totalPrice.textContent = totalPriceValue;
+      }
+
+      // Save cart to localStorage
+      function saveCart() {
+        localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      }
+
+      // Clear cart
+      clearCartBtn.addEventListener("click", function () {
+        if (confirm("Are you sure you want to clear your cart?")) {
+          cartItems = [];
+          saveCart();
+          showEmptyCart();
+        }
+      });
+
+      // Checkout
+      checkoutBtn.addEventListener("click", function () {
+        alert("Checkout functionality would be implemented here!");
+      });
+
+      // Initialize cart on page load
+      initCart();
+    </script>
+  </body>
+</html>
