@@ -13,223 +13,342 @@ menuToggle.addEventListener("click", () => {
 
 // Cart functionality
 let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-let cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-// Button functionality
-document.addEventListener("DOMContentLoaded", function () {
-  // Sign In buttons
-  const signInBtn = document.getElementById("sign-in-btn");
-  const mobileSignInBtn = document.getElementById("mobile-sign-in-btn");
-
-  function handleSignIn() {
-    window.location.href = "signin.html";
-  }
-
-  if (signInBtn) signInBtn.addEventListener("click", handleSignIn);
-  if (mobileSignInBtn) mobileSignInBtn.addEventListener("click", handleSignIn);
-
-  // Cart buttons (desktop and mobile)
+document.addEventListener("DOMContentLoaded", () => {
+  console.log('=== DOM CONTENT LOADED ===');
+  
+  // Cart button
   const cartBtn = document.getElementById("cart-btn");
-  const mobileCartBtn = document.getElementById("mobile-cart-btn");
-
   if (cartBtn) {
-    cartBtn.addEventListener("click", function () {
-      showCartModal();
+    cartBtn.addEventListener("click", () => {
+      window.location.href = "cart.html";
     });
   }
 
+  // Mobile cart button
+  const mobileCartBtn = document.getElementById("mobile-cart-btn");
   if (mobileCartBtn) {
-    mobileCartBtn.addEventListener("click", function () {
-      showCartModal();
+    mobileCartBtn.addEventListener("click", () => {
+      window.location.href = "cart.html";
     });
   }
 
-  // Get Started buttons
-  const getStartedBtn = document.getElementById("get-started-btn");
-  const mobileGetStartedBtn = document.getElementById("mobile-get-started-btn");
-
-  function handleGetStarted() {
-    alert("Get Started functionality would redirect to registration page");
-    // In a real app, this would redirect to a registration page
-    // window.location.href = '/register';
-  }
-
-  if (getStartedBtn) getStartedBtn.addEventListener("click", handleGetStarted);
-  if (mobileGetStartedBtn)
-    mobileGetStartedBtn.addEventListener("click", handleGetStarted);
-
-  // Explore Collection button
+  // Explore Collection button - smooth scroll to collection section
   const exploreBtn = document.getElementById("explore-btn");
   if (exploreBtn) {
-    exploreBtn.addEventListener("click", function () {
-      document.getElementById("collection").scrollIntoView({
-        behavior: "smooth",
-      });
+    exploreBtn.addEventListener("click", () => {
+      const collectionSection = document.getElementById("collection");
+      if (collectionSection) {
+        collectionSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
     });
   }
 
-  // Load products from admin panel or use default products
-  let adminProducts = JSON.parse(localStorage.getItem('adminProducts')) || [];
-  
-  // Default products if no admin products exist
-  const defaultProducts = [
+  // Load and render products
+  const products = [
     {
       id: "add-to-cart-1",
       product: "Midnight Essence",
-      price: 89,
-      priceStr: "$89",
+      description: "A captivating blend of dark berries and vanilla",
+      priceStr: "$89.99",
+      price: 89.99,
+      image: "",
+      category: "Premium",
+      status: "active",
     },
     {
       id: "add-to-cart-2",
-      product: "Royal Amber",
-      price: 125,
-      priceStr: "$125",
+      product: "Ocean Breeze",
+      description: "Fresh marine notes with hints of citrus",
+      priceStr: "$79.99",
+      price: 79.99,
+      image: "",
+      category: "Fresh",
+      status: "active",
     },
     {
       id: "add-to-cart-3",
-      product: "Ocean Breeze",
-      price: 75,
-      priceStr: "$75",
+      product: "Golden Hour",
+      description: "Warm amber and sandalwood composition",
+      priceStr: "$94.99",
+      price: 94.99,
+      image: "",
+      category: "Luxury",
+      status: "active",
     },
   ];
-  
-  // Use admin products if available, otherwise use default
-  const addToCartBtns = adminProducts.length > 0 ? adminProducts : defaultProducts;
 
-  addToCartBtns.forEach((item) => {
-    const btn = document.getElementById(item.id);
-    if (btn) {
-      btn.addEventListener("click", function () {
-        // Add visual feedback
-        btn.style.transform = "scale(0.95)";
-        setTimeout(() => {
-          btn.style.transform = "scale(1)";
-        }, 150);
+  console.log('=== DOM CONTENT LOADED (MAIN) ===');
+  console.log('Products array:', products);
+  console.log('Products length:', products.length);
+  console.log('About to render products...');
+  renderProducts(products);
+  console.log('Initializing cart display...');
+  updateCartDisplay(); // Initialize cart display on page load
 
-        // Add to cart
-        addToCart(item);
-
-        // Show notification
-        showNotification(`${item.product} (${item.priceStr}) added to cart!`);
-      });
-    }
-  });
+  localStorage.removeItem("adminProducts");
+  localStorage.removeItem("adminProductsData");
 });
+
+// Function to render products dynamically
+function renderProducts(products) {
+  const productGrid = document.querySelector(
+    ".grid.md\\:grid-cols-2.lg\\:grid-cols-3.gap-8"
+  );
+
+  if (!productGrid) {
+    console.error('Product grid not found! Looking for:', '.grid.md\\:grid-cols-2.lg\\:grid-cols-3.gap-8');
+    return;
+  }
+  
+  console.log('Product grid found:', productGrid);
+  productGrid.innerHTML = "";
+
+  // Filter and render only active products
+  const activeProducts = products.filter(
+    (product) => product.status === "active"
+  );
+  console.log('Rendering', activeProducts.length, 'products');
+  activeProducts.forEach((product, index) => {
+    console.log('Creating product card for:', product.product, 'with ID:', product.id);
+    const productCard = document.createElement('div');
+    productCard.className = 'dark-card rounded-2xl p-6 hover:scale-105 transition-all duration-300 group hover:shadow-2xl hover:shadow-white/20';
+    productCard.innerHTML = `
+      <div class="h-64 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden">
+        ${
+          product.image
+            ? `<img src="${product.image}" alt="${product.product}" class="w-full h-full object-cover rounded-xl" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
+            : ""
+        }
+        <div class="${
+          product.image ? "hidden" : "flex"
+        } absolute inset-0 bg-black bg-opacity-20 items-center justify-center">
+          <div class="w-20 h-32 bg-white bg-opacity-30 rounded-lg floating relative z-10 shadow-lg" style="animation-delay: ${
+            index * -2
+          }s"></div>
+        </div>
+        <div class="absolute top-4 right-4 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">
+          ${product.category || "Premium"}
+        </div>
+      </div>
+      <h3 class="text-2xl font-semibold mb-2 text-white">${
+        product.product
+      }</h3>
+      <p class="text-gray-300 mb-4">${
+        product.description || "Premium fragrance collection"
+      }</p>
+      <div class="flex justify-between items-center">
+        <span class="text-2xl font-bold text-white">${product.priceStr}</span>
+        <button
+          id="${product.id}"
+          class="bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-500 hover:to-gray-700 px-6 py-2 rounded-full transition-all duration-300 text-white font-medium glow add-to-cart-btn"
+          data-product-id="${product.id}"
+        >
+          Add to Cart
+        </button>
+      </div>
+    `;
+
+    // Add event listener immediately after creating the element
+    const button = productCard.querySelector(`#${product.id}`);
+    console.log('Button found for', product.product, ':', !!button);
+    if (button) {
+      console.log('Adding event listener to button for:', product.product);
+      button.addEventListener("click", (e) => {
+        console.log('=== BUTTON CLICKED ===');
+        console.log('Product:', product.product);
+        console.log('Product ID:', product.id);
+        console.log('Event target:', e.target);
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart(product);
+        updateCartDisplay();
+        showNotification(`${product.product} (${product.priceStr}) added to cart!`);
+      });
+      
+      // Also add a test click handler to verify the button is working
+      button.addEventListener("mousedown", () => {
+        console.log('Mouse down on button for:', product.product);
+      });
+    } else {
+      console.error('Button NOT found for product:', product.product);
+    }
+
+    productGrid.appendChild(productCard);
+    console.log('Product card appended for:', product.product);
+  });
+  
+  console.log('Finished rendering products. Total buttons in DOM:', document.querySelectorAll('.add-to-cart-btn').length);
+
+
+}
 
 // Cart management functions
 function addToCart(item) {
-  // Load cart from localStorage
-  cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-
+  console.log('addToCart called with:', item);
   const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
 
   if (existingItem) {
     existingItem.quantity += 1;
+    console.log('Updated existing item:', existingItem);
   } else {
-    cartItems.push({
+    const newItem = {
       id: item.id,
       product: item.product,
-      price: item.price,
       priceStr: item.priceStr,
+      price: item.price,
       quantity: 1,
-    });
+    };
+    cartItems.push(newItem);
+    console.log('Added new item:', newItem);
   }
 
-  // Save to localStorage
+  console.log('Current cartItems:', cartItems);
   localStorage.setItem("cartItems", JSON.stringify(cartItems));
-
-  cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  updateCartCount();
 }
 
-function updateCartCount() {
-  const cartCountElement = document.getElementById("cart-count");
-  const mobileCartCountElement = document.getElementById("mobile-cart-count");
-
-  if (cartCountElement) {
-    cartCountElement.textContent = cartCount;
-  }
-
-  if (mobileCartCountElement) {
-    mobileCartCountElement.textContent = cartCount;
-  }
-
-  // Update cart preview
-  updateCartPreview();
-}
-
-function updateCartPreview() {
+function updateCartDisplay() {
+  const cartCount = document.getElementById("cart-count");
+  const mobileCartCount = document.getElementById("mobile-cart-count");
   const cartPreviewItems = document.getElementById("cart-preview-items");
   const cartPreviewTotal = document.getElementById("cart-preview-total");
 
-  if (!cartPreviewItems || !cartPreviewTotal) return;
-
-  if (cartItems.length === 0) {
-    cartPreviewItems.innerHTML =
-      '<p class="text-gray-400 text-center py-4">Your cart is empty</p>';
-    cartPreviewTotal.textContent = "$0";
-    return;
+  // Update cart count
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  if (cartCount) {
+    cartCount.textContent = totalItems;
+    cartCount.style.display = totalItems > 0 ? "block" : "none";
+  }
+  if (mobileCartCount) {
+    mobileCartCount.textContent = totalItems;
   }
 
-  let total = 0;
-  cartPreviewItems.innerHTML = "";
+  // Update cart preview
+  if (cartPreviewItems) {
+    cartPreviewItems.innerHTML = "";
+    let total = 0;
 
-  cartItems.forEach((item) => {
-    total += item.price * item.quantity;
-
-    const itemElement = document.createElement("div");
-    itemElement.className =
-      "cart-preview-item flex items-center justify-between p-2";
-    itemElement.innerHTML = `
-      <div class="flex items-center space-x-2">
-        <div class="w-8 h-8 bg-gradient-to-br from-gray-700 to-gray-900 rounded flex items-center justify-center text-xs">🍃</div>
+    cartItems.forEach((item) => {
+      // Use Math.round to avoid floating point precision issues
+      total += Math.round((item.price * item.quantity) * 100) / 100;
+      const cartItem = document.createElement("div");
+      cartItem.className = "flex justify-between items-center py-2";
+      cartItem.innerHTML = `
         <div>
-          <p class="text-white text-sm font-medium">${item.product}</p>
-          <p class="text-gray-400 text-xs">${item.quantity}x ${
-      item.priceStr
-    }</p>
-        </div>
-      </div>
-      <p class="text-white text-sm font-semibold">$${
-        item.price * item.quantity
-      }</p>
-    `;
+          <p class="font-medium">${item.product}</p>
+          <p class="text-sm text-gray-400">Qty: ${item.quantity}</p>
+down         </div>
+        <p class="font-bold">$${(item.price * item.quantity).toFixed(2)}</p>
+      `;
+      cartPreviewItems.appendChild(cartItem);
+    });
 
-    cartPreviewItems.appendChild(itemElement);
-  });
-
-  cartPreviewTotal.textContent = `$${total}`;
+    if (cartPreviewTotal) {
+      // Ensure the final total is properly rounded
+      cartPreviewTotal.textContent = `$${(Math.round(total * 100) / 100).toFixed(2)}`;
+    }
+  }
 }
 
 function showCartModal() {
-  // Redirect to cart page
-  window.location.href = "cart.html";
+  // Create modal if it doesn't exist
+  let modal = document.getElementById("cart-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "cart-modal";
+    modal.className =
+      "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+    modal.innerHTML = `
+      <div class="bg-gray-900 p-6 rounded-lg max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold text-white">Shopping Cart</h3>
+          <button id="close-cart-modal" class="text-gray-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div id="cart-modal-items" class="mb-4"></div>
+        <div class="border-t pt-4">
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-lg font-bold text-white">Total: <span id="cart-modal-total">$0.00</span></span>
+          </div>
+          <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
+            Checkout
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Add close event listener
+    document
+      .getElementById("close-cart-modal")
+      .addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+
+    // Close on backdrop click
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  }
+
+  // Update modal content
+  const modalItems = document.getElementById("cart-modal-items");
+  const modalTotal = document.getElementById("cart-modal-total");
+
+  modalItems.innerHTML = "";
+  let total = 0;
+
+  if (cartItems.length === 0) {
+    modalItems.innerHTML =
+      '<p class="text-gray-400 text-center py-4">Your cart is empty</p>';
+  } else {
+    cartItems.forEach((item) => {
+      // Use Math.round to avoid floating point precision issues
+      total += Math.round((item.price * item.quantity) * 100) / 100;
+      const cartItem = document.createElement("div");
+      cartItem.className =
+        "flex justify-between items-center py-2 border-b border-gray-700";
+      cartItem.innerHTML = `
+        <div>
+ction          <p class="font-medium text-white">${item.product}</p>
+          <p class="text-sm text-gray-400">Qty: ${item.quantity} × $${item.price.toFixed(2)}</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="removeFromCart('${item.id}')" class="text-red-400 hover:text-red-300">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        </div>
+      `;
+      modalItems.appendChild(cartItem);
+    });
+  }
+
+  // Ensure the final total is properly rounded
+  modalTotal.textContent = `$${(Math.round(total * 100) / 100).toFixed(2)}`;
+  modal.style.display = "flex";
 }
 
-// Notification system
-function showNotification(message) {
-  // Create notification element
-  const notification = document.createElement("div");
-  notification.className =
-    "fixed top-20 right-4 bg-black border border-white text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300";
-  notification.textContent = message;
-
-  // Add to page
-  document.body.appendChild(notification);
-
-  // Animate in
-  setTimeout(() => {
-    notification.style.transform = "translateX(0)";
-  }, 100);
-
-  // Remove after 3 seconds
-  setTimeout(() => {
-    notification.style.transform = "translateX(full)";
-    setTimeout(() => {
-      document.body.removeChild(notification);
-    }, 300);
-  }, 3000);
+function removeFromCart(itemId) {
+  cartItems = cartItems.filter((item) => item.id !== itemId);
+  localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  updateCartDisplay();
+  showCartModal(); // Refresh modal
 }
+
+// Initialize cart display on page load
+document.addEventListener("DOMContentLoaded", () => {
+  updateCartDisplay();
+});
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -248,8 +367,7 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 // Three.js 3D Background Animation
 let scene, camera, renderer, particles;
 
-function initThreeJS() {
-  // Scene setup
+function init3D() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(
     75,
@@ -260,134 +378,51 @@ function initThreeJS() {
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x000000, 0);
+  document.getElementById("three-canvas").appendChild(renderer.domElement);
 
-  const container = document.getElementById("three-container");
-  container.appendChild(renderer.domElement);
+  // Create particles
+  const geometry = new THREE.BufferGeometry();
+  const vertices = [];
+  const colors = [];
 
-  // Create floating particles
-  const particleCount = 100;
-  const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
+  for (let i = 0; i < 1000; i++) {
+    vertices.push(
+      (Math.random() - 0.5) * 2000,
+      (Math.random() - 0.5) * 2000,
+      (Math.random() - 0.5) * 2000
+    );
 
-  for (let i = 0; i < particleCount; i++) {
-    // Position
-    positions[i * 3] = (Math.random() - 0.5) * 100;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
-
-    // Colors (blue to purple gradient)
-    const colorChoice = Math.random();
-    if (colorChoice < 0.33) {
-      colors[i * 3] = 0.4; // R
-      colors[i * 3 + 1] = 0.6; // G
-      colors[i * 3 + 2] = 1.0; // B
-    } else if (colorChoice < 0.66) {
-      colors[i * 3] = 0.6; // R
-      colors[i * 3 + 1] = 0.4; // G
-      colors[i * 3 + 2] = 1.0; // B
-    } else {
-      colors[i * 3] = 1.0; // R
-      colors[i * 3 + 1] = 0.4; // G
-      colors[i * 3 + 2] = 0.8; // B
-    }
+    colors.push(Math.random(), Math.random(), Math.random());
   }
 
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(vertices, 3)
+  );
+  geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
 
   const material = new THREE.PointsMaterial({
-    size: 2,
+    size: 3,
     vertexColors: true,
     transparent: true,
     opacity: 0.8,
-    blending: THREE.AdditiveBlending,
   });
 
   particles = new THREE.Points(geometry, material);
   scene.add(particles);
 
-  // Add floating geometric shapes
-  createFloatingShapes();
+  camera.position.z = 1000;
 
-  camera.position.z = 50;
-
-  animate();
+  animate3D();
 }
 
-function createFloatingShapes() {
-  const shapes = [];
+function animate3D() {
+  requestAnimationFrame(animate3D);
 
-  // Create various geometric shapes
-  for (let i = 0; i < 15; i++) {
-    let geometry, material, mesh;
-
-    const shapeType = Math.floor(Math.random() * 3);
-
-    switch (shapeType) {
-      case 0:
-        geometry = new THREE.BoxGeometry(2, 2, 2);
-        break;
-      case 1:
-        geometry = new THREE.SphereGeometry(1, 8, 6);
-        break;
-      case 2:
-        geometry = new THREE.OctahedronGeometry(1.5);
-        break;
-    }
-
-    material = new THREE.MeshBasicMaterial({
-      color: new THREE.Color().setHSL(Math.random() * 0.3 + 0.6, 0.7, 0.5),
-      transparent: true,
-      opacity: 0.3,
-      wireframe: true,
-    });
-
-    mesh = new THREE.Mesh(geometry, material);
-
-    // Random position
-    mesh.position.x = (Math.random() - 0.5) * 80;
-    mesh.position.y = (Math.random() - 0.5) * 80;
-    mesh.position.z = (Math.random() - 0.5) * 80;
-
-    // Random rotation speed
-    mesh.userData = {
-      rotationSpeed: {
-        x: (Math.random() - 0.5) * 0.02,
-        y: (Math.random() - 0.5) * 0.02,
-        z: (Math.random() - 0.5) * 0.02,
-      },
-      floatSpeed: Math.random() * 0.02 + 0.01,
-    };
-
-    scene.add(mesh);
-    shapes.push(mesh);
-  }
-
-  return shapes;
-}
-
-function animate() {
-  requestAnimationFrame(animate);
-
-  // Rotate particles
   if (particles) {
     particles.rotation.x += 0.001;
     particles.rotation.y += 0.002;
   }
-
-  // Animate floating shapes
-  scene.children.forEach((child) => {
-    if (child.userData && child.userData.rotationSpeed) {
-      child.rotation.x += child.userData.rotationSpeed.x;
-      child.rotation.y += child.userData.rotationSpeed.y;
-      child.rotation.z += child.userData.rotationSpeed.z;
-
-      // Floating motion
-      child.position.y +=
-        Math.sin(Date.now() * child.userData.floatSpeed) * 0.01;
-    }
-  });
 
   // Camera movement based on mouse position
   const mouseX = (window.mouseX || 0) * 0.0001;
@@ -400,8 +435,8 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Mouse tracking for camera movement
-window.addEventListener("mousemove", (event) => {
+// Mouse tracking for 3D effect
+document.addEventListener("mousemove", (event) => {
   window.mouseX = event.clientX - window.innerWidth / 2;
   window.mouseY = event.clientY - window.innerHeight / 2;
 });
@@ -416,10 +451,9 @@ window.addEventListener("resize", () => {
 // Parallax scrolling effect
 window.addEventListener("scroll", () => {
   const scrolled = window.pageYOffset;
-  const parallax = document.querySelector("#three-container");
-  const speed = scrolled * 0.5;
-
+  const parallax = document.querySelector(".parallax");
   if (parallax) {
+    const speed = scrolled * 0.5;
     parallax.style.transform = `translateY(${speed}px)`;
   }
 });
@@ -427,37 +461,25 @@ window.addEventListener("scroll", () => {
 // Form submission handling
 document.querySelector("form").addEventListener("submit", (e) => {
   e.preventDefault();
-
-  // Get form data
   const formData = new FormData(e.target);
-  const name = e.target.querySelector('input[type="text"]').value;
-  const email = e.target.querySelector('input[type="email"]').value;
-  const message = e.target.querySelector("textarea").value;
+  const email = formData.get("email");
+  const name = formData.get("name");
+  const message = formData.get("message");
 
-  // Simple validation
-  if (!name || !email || !message) {
-    alert("Please fill in all fields");
+  // Basic validation
+  if (!email || !name || !message) {
+    showNotification("Please fill in all fields.", "error");
     return;
   }
 
   if (!isValidEmail(email)) {
-    alert("Please enter a valid email address");
+    showNotification("Please enter a valid email address.", "error");
     return;
   }
 
   // Simulate form submission
-  const submitButton = e.target.querySelector('button[type="submit"]');
-  const originalText = submitButton.textContent;
-
-  submitButton.textContent = "Sending...";
-  submitButton.disabled = true;
-
-  setTimeout(() => {
-    alert("Thank you for your message! We'll get back to you soon.");
-    e.target.reset();
-    submitButton.textContent = originalText;
-    submitButton.disabled = false;
-  }, 2000);
+  showNotification("Thank you for your message! We'll get back to you soon.");
+  e.target.reset();
 });
 
 // Email validation function
@@ -466,31 +488,16 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
-// Add to cart functionality
-document.querySelectorAll("button").forEach((button) => {
-  if (button.textContent.includes("Add to Cart")) {
-    button.addEventListener("click", (e) => {
-      const card = e.target.closest(".glass-effect");
-      const productName = card.querySelector("h3").textContent;
-      const price = card.querySelector(".text-2xl.font-bold").textContent;
-
-      // Animate button
-      e.target.style.transform = "scale(0.95)";
-      setTimeout(() => {
-        e.target.style.transform = "scale(1)";
-      }, 150);
-
-      // Show confirmation
-      showNotification(`${productName} added to cart!`);
-    });
-  }
-});
-
 // Notification system
-function showNotification(message) {
+function showNotification(message, type = "success") {
+  // Remove existing notifications
+  const existingNotifications = document.querySelectorAll(".notification");
+  existingNotifications.forEach((notification) => notification.remove());
+
   const notification = document.createElement("div");
-  notification.className =
-    "fixed top-20 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300";
+  notification.className = `notification fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 ${
+    type === "error" ? "bg-red-600 text-white" : "bg-green-600 text-white"
+  }`;
   notification.textContent = message;
 
   document.body.appendChild(notification);
@@ -504,54 +511,16 @@ function showNotification(message) {
   setTimeout(() => {
     notification.style.transform = "translateX(full)";
     setTimeout(() => {
-      document.body.removeChild(notification);
+      notification.remove();
     }, 300);
   }, 3000);
 }
 
-// Animated background scroll effect
-function handleBackgroundScroll() {
-  const animatedBg = document.getElementById("animated-bg");
-  const scrollY = window.scrollY;
-  const fadeThreshold = 200; // Start fading after 200px scroll
-
-  if (scrollY > fadeThreshold) {
-    animatedBg.classList.add("fade-out");
-  } else {
-    animatedBg.classList.remove("fade-out");
-  }
-}
-
-// Initialize everything when DOM is loaded
+// Initialize 3D background when page loads
 document.addEventListener("DOMContentLoaded", () => {
-  // Add scroll listener for background effect
-  window.addEventListener("scroll", handleBackgroundScroll);
-
-  // Initialize cart count display
-  updateCartCount();
-
-  initThreeJS();
-
-  // Add loading animation
-  const loader = document.createElement("div");
-  loader.className =
-    "fixed inset-0 bg-gray-900 flex items-center justify-center z-50";
-  loader.innerHTML = `
-        <div class="text-center">
-            <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-white text-xl">Loading...</p>
-        </div>
-    `;
-
-  document.body.appendChild(loader);
-
-  // Remove loader after everything is loaded
-  setTimeout(() => {
-    loader.style.opacity = "0";
-    setTimeout(() => {
-      document.body.removeChild(loader);
-    }, 500);
-  }, 2000);
+  if (typeof THREE !== "undefined") {
+    init3D();
+  }
 });
 
 // Intersection Observer for scroll animations
@@ -563,19 +532,15 @@ const observerOptions = {
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
-      entry.target.style.opacity = "1";
-      entry.target.style.transform = "translateY(0)";
+      entry.target.classList.add("animate-fade-in");
     }
   });
 }, observerOptions);
 
-// Observe elements for scroll animations
+// Observe all sections for scroll animations
 document.addEventListener("DOMContentLoaded", () => {
-  const animateElements = document.querySelectorAll(".glass-effect, h2, p");
-  animateElements.forEach((el) => {
-    el.style.opacity = "0";
-    el.style.transform = "translateY(30px)";
-    el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+  const sections = document.querySelectorAll("section, .dark-card");
+  sections.forEach((el) => {
     observer.observe(el);
   });
 });
